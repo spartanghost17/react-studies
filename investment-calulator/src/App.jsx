@@ -33,7 +33,7 @@ const LABELS = {
 };
 
 function App() {
-  const [tableData, setTableTada] = useState([]);
+  const [tableData, setTableData] = useState([]);
   const [labels, setLabels] = useState(LABELS);
 
   const handleInputChange = (event, sectionKey, labelId) => {
@@ -52,7 +52,7 @@ function App() {
       });
     }
 
-    setTableTada(
+    setTableData(
       calculateInvestmentResults({
         initialInvestment: labels["section1"][0].value,
         annualInvestment: labels["section1"][1].value,
