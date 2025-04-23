@@ -1,79 +1,36 @@
 import { useState } from "react";
 
 import Header from "./components/Header";
-import InputGroup from "./components/InputGroup";
-import Table from "./components/Table";
-import { calculateInvestmentResults } from "./util/investment.js";
-
-const LABELS = {
-  section1: [
-    {
-      id: 1,
-      label: "INITIAL INVESTMENT",
-      value: 0,
-    },
-    {
-      id: 2,
-      label: "ANNUAL INVESTMENT",
-      value: 0,
-    },
-  ],
-  section2: [
-    {
-      id: 3,
-      label: "EXPECTED RETURN",
-      value: 0,
-    },
-    {
-      id: 4,
-      label: "DURATION",
-      value: 0,
-    },
-  ],
-};
+import UserInput from "./components/UserInput";
+import Results from "./components/Results";
 
 function App() {
-  const [tableData, setTableData] = useState([]);
-  const [labels, setLabels] = useState(LABELS);
+  const [userInput, setUserInput] = useState({
+    initialInvestment: 10000,
+    annualInvestment: 1200,
+    expectedReturn: 6,
+    duration: 10,
+  });
 
-  const handleInputChange = (event, sectionKey, labelId) => {
-    if (event.target.value) {
-      setLabels((prevLabels) => {
-        const updateSection = prevLabels[sectionKey].map((labelObj) =>
-          labelObj.id === labelId ? { ...labelObj, value: 0 } : labelObj
-        );
-        console.log(
-          `updated for id ${labelId} with value ${event.target.value}`
-        );
-        return {
-          ...prevLabels,
-          [sectionKey]: updateSection,
-        };
-      });
-    }
+  const inputIsValid = userInput.duration >= 1;
 
-    setTableData(
-      calculateInvestmentResults({
-        initialInvestment: labels["section1"][0].value,
-        annualInvestment: labels["section1"][1].value,
-        expectedReturn: labels["section2"][0].value,
-        duration: labels["section1"][1].value,
-      })
-    );
-  };
+  function handleChange(inputIdentifier, newValue) {
+    setUserInput((prevUserInput) => {
+      return {
+        ...prevUserInput,
+        [inputIdentifier]: +newValue,
+      };
+    });
+  }
 
   return (
     <>
       <Header />
-      {Object.entries(labels).map(([sectionKey, labels], idx) => (
-        <InputGroup
-          handleInputChange={handleInputChange}
-          key={sectionKey}
-          sectionKey={sectionKey}
-          labels={labels}
-        />
-      ))}
-      <Table data={tableData} />
+      <UserInput userInput={userInput} onChange={handleChange} />
+      {!inputIsValid && (
+        <p className="center">Please enter a duration greater than zero.</p>
+      )}
+      {inputIsValid && <Results input={userInput} />}
     </>
   );
 }
