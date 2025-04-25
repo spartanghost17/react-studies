@@ -1,0 +1,226 @@
+attribute:
+
+- defer:
+	waits for HTML To be parsed before loading the javascript file
+- module:
+	unlocks import/export capability
+
+
+package.json:
+
+"react-scripts" import in package.json transforms your files behind the scenes and adjust + loads the transformed source code
+
+
+Tree of components rendered inside the #root by react. React combines everything to generate a DOM
+
+---------------
+React HOOKS:
+---------------
+
+useState Hook:
+-------------------
+useState referesh the whole component in which it is called
+
+const [val, set] = useState("val") 
+
+We can use "const" because behind the scenes react will tell the component to be refreshed, and pass the actual new "val" from behind the scenes. 
+The updated value is only available once the component has been refreshed
+
+Patterns
+*******************
+------------------------------
+Forwarded Props or Proxy props:
+-------------------------------
+by default React does not forward props like id, className and other HTML attributes, we must therefore structure them as a props (...props)
+and then destructure them on the parent tag {...props}
+
+export default function Section({ title, children, ...props }) {
+  return (
+    <section {...props}>
+      <h2>{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+---------------------------
+multiple JSX Slots (passing jsx without being children)
+---------------------------
+
+To do so we can pass a prop, to the target component and send the element of interest. 
+Example: You want to build a menu by attaching the tabButtons to the <menu> element, but maybe there are other parts of the application were you don't wish to do so 
+maybe you want to attach to the <li> to the <ul> 
+
+* for example if i want to attach it to a custom component I could do the following.
+buttonsContainer={Section}
+
+* or if I want to attach it to a native element I could do the following:
+buttonsContainer="menu"
+
+
+example:
+
+export default function Tabs({
+  children,
+  buttons,
+  buttonsContainer, //custom container maybe for different parts of the application
+  ...props
+}) {
+  const ButtonsContainer = buttonsContainer; //react will look for value in buttonsContainer and either look for built in or custom component
+  return (
+    <>
+      <ButtonsContainer {...props}>{buttons}</ButtonsContainer>
+      {children}
+    </>
+  );
+}
+
+
+The prop can also start with an upper case character liek ButtonsContainer to avoid setting up a const ButtonsContainer = buttonsContainer
+
+
+-------------------
+image accessibility
+-------------------
+
+images inside the /public directory will not be handle by the underlying build process.
+images inside src/assets/ will be handled by the build process and are generally images made available through code
+
+********************
+STATE MANAGEMENT
+********************
+
+-------------------
+Updating State
+-------------------
+
+If updating state depends on previous state, you must past a function to update the state (guarantees the latest state value):
+
+setIsEditing((isEditing) => !isEditing); instead of setIsEditing(!isEditing)
+
+this setIsEditing(!isEditing) is a scheduled state update but not immediately changed
+
+---------------------------------------
+mutating state (for arrays and objects)
+----------------------------------------
+
+You must NOT mutate the state of a state value! This is because items in javascript are just references to the objects.
+so if you mutate the state, javascript will immediatelly change the value in memory leading to unintended consequences.
+
+So instead of this:
+-------------------
+
+const handleSelectSquare = (rowIdx, colIdx) =>  {
+        setGameBoard((prevGameBoard) => {
+            prevGameBoard[rowIdx][colIdx] = "X";
+            return prevGameBoard;;
+        })
+    }
+
+Do this:
+----------
+
+const handleSelectSquare = (rowIdx, colIdx) =>  {
+        setGameBoard((prevGameBoard) => {
+            const updatedBoard = [...prevGameBoard].map(innerArray => [...innerArray]);
+            updatedBoard[rowIdx][colIdx] = "X";
+            return updatedBoard;
+        })
+    }
+
+
+-----------------------------
+Lifting the state up (Kind of like Angular Emit)
+-----------------------------
+
+Lift the state to the closest Ancestor component that has access to both components that needs communication.
+
+              Ancestor component (has state and manages it for both children)
+                      |
+		      |
+   _______________________________________	
+  |                                       |
+  |				          |
+Child 1             			Child 2
+
+
+
+
+--------------------------
+Avoid Merging States
+--------------------------
+
+Don't merge state directly when:
+
+You want to avoid stale values due to async rendering/batching.
+
+
+------------------------
+Objects & Array immutability
+------------------------
+
+You should always replace objects or array when using state objects
+
+
+
+
+*********************
+Styling
+*********************
+
+Vanilla Css
+----------
+Styling is not scopped to components because react will inject all the style in the <head> element of the app (global css)
+
+- For valina CSS you can just pass the css inside the style prop as style={{color: 'red'}}, this is inline style.
+
+Css Modules:
+-------
+- To scope valina css to component use [CSS Modules]:
+	- css file must be named with name.module.css => Header.module.css
+	- then imported into component as  import classes from "./Header.module.css"
+	- and used inline <p className={classes.myclass}
+
+Styled-components:
+------
+
+npm package used for styling elements as components
+
+import {styled} from "styled-components"
+
+(the backticks are at the end of div, and this is called Tagged Templates)
+
+const ControlContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+`
+
+- The above returns a normal react component with the all the props including the children prop.
+- Means that the styled Component can receive props like any react component:
+	* 
+	const Label = styled.label`
+  	display: block;
+  	margin-bottom: 0.5rem;
+  	font-size: 0.75rem;
+  	font-weight: 700;
+  	letter-spacing: 0.1em;
+  	text-transform: uppercase;
+  	color: ${({invalid}) => invalid ? '#f87171' : '#6b7280'};
+	`;
+In the above the 'invalid' prop was passed to the component inside the JSX
+
+
+Working around built-in props:
+----
+
+If the prop name we are passing down to the component is conflicts with an existing one just add a $ before it. 
+This is for props that will ONLY BE USED in STYLING code.
+
+EX:
+	instead of =>: <Input invalid={isValid}/> use: <Input $invalid={isValid}/> 
+
+
+
+

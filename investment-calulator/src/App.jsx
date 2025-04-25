@@ -12,7 +12,7 @@ function App() {
     duration: 10,
   });
 
-  const inputIsValid = userInput.duration >= 1;
+  const inputIsValid = userInput.duration > 0;
 
   function handleChange(inputIdentifier, newValue) {
     setUserInput((prevUserInput) => {
