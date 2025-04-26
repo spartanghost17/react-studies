@@ -223,4 +223,15 @@ EX:
 
 
 
+Conditional tailwindcss classes:
+----
+
+this tool might be useful for that:
+
+	import clsx from 'clsx';
+
+	const labelClasses = clsx(
+  	"mb-2 block text-xs font-bold uppercase tracking-wide",
+  	invalid ? "text-red-400" : "text-stone-300"
+	);
 
