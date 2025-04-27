@@ -235,3 +235,53 @@ this tool might be useful for that:
   	invalid ? "text-red-400" : "text-stone-300"
 	);
 
+
+*********************
+Debbuging
+*********************
+
+Can either be done with:
+
+- Stack trace
+- Browser devtools with breakpoints
+- using StrickMode (wrap around target components) and executes every component twice (Helps catch bugs early).
+	import { StrictMode } from "react";
+	import ReactDOM from "react-dom/client";
+
+	import App from "./App.jsx";
+	import "./index.css";
+
+	ReactDOM.createRoot(document.getElementById("root")).render(
+  	<StrictMode>
+    		<App />
+  	</StrictMode>
+	); 
+- reactDevTools (make sure to allow File access by going into [manage extension] > allow file URLS
+
+
+
+
+
+*********************
+Refs & Portals
+*********************
+
+* useRef:
+-----
+ATTENTION defining any variables outside of the respective Component function, means that the variable will be SHARED accross multiple instances of that component and 
+ultimately overwritten.
+
+- For values that must be managed but that are not states and have to remain accross refreshes (also not directly impact UI)
+- ensetially provides you with a reference to the element its a bit like angular Element by reference?
+
+	const playerName = useRef();
+	<input ref={playerName} type="text" />
+	<h2>Welcome {enteredPlayerName ?? "unknown entity"}</h2> // the '??' outputs left if truthy & right if falsy
+
+- Ref does not re-execute (refresh) the component it is in !! 
+- older react version did not accept forwarding refs by default and had to wrap the component inside a forwardRef function
+
+* useImperativeHandle:
+---
+
+- used to help component expose only specific functions to parent instead of the entire DOM Node.
