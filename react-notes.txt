@@ -266,7 +266,7 @@ Can either be done with:
 Refs & Portals
 *********************
 
-* useRef:
+* useRef (old versions = forwardRef):
 -----
 ATTENTION defining any variables outside of the respective Component function, means that the variable will be SHARED accross multiple instances of that component and 
 ultimately overwritten.
@@ -284,4 +284,9 @@ ultimately overwritten.
 * useImperativeHandle:
 ---
 
-- used to help component expose only specific functions to parent instead of the entire DOM Node.
+	- used to help component expose only specific functions to parent instead of the entire DOM Node.
+
+
+* createPortal (from "react-dom")
+---
+	- allows us to output components JSX outside of normal document flow (kind of like using absolute to remove the element from normal document flow and make it relative to nearest relative). You need to make it attach to a the id of target element. Example modal popup in root <div id="modal"> element
