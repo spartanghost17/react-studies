@@ -1,4 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
+import { createPortal } from "react-dom";
 
 export default function ResultModal({
   ref,
@@ -19,7 +20,7 @@ export default function ResultModal({
     };
   });
 
-  return (
+  return createPortal(
     <dialog ref={dialog} className="result-modal" onClose={onReset}>
       {userLost && <h2>You Lost </h2>}
       {!userLost && <h2>You Score {score} </h2>}
@@ -33,7 +34,8 @@ export default function ResultModal({
       <form method="dialog" onSubmit={onReset}>
         <button>Close</button>
       </form>
-    </dialog>
+    </dialog>,
+    document.getElementById("modal")
   );
 }
 
@@ -55,7 +57,7 @@ export default function ResultModal({
 //     };
 //   });
 
-//   return (
+//   return createPortal(
 //     <dialog ref={dialog} className="result-modal" onClose={onReset}>
 //       {userLost && <h2>You Lost </h2>}
 //       {!userLost && <h2>You Score {score} </h2>}
@@ -69,7 +71,8 @@ export default function ResultModal({
 //       <form method="dialog" onSubmit={onReset}>
 //         <button>Close</button>
 //       </form>
-//     </dialog>
+//     </dialog>,
+//     document.getElementById("modal")
 //   );
 // });
 
